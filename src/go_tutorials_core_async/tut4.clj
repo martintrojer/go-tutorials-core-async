@@ -6,17 +6,20 @@
 (defn fib-q [res-ch quit-ch]
   (go
    (loop [x 0 y 1]
+     ;; note we're putting onto res-ch inside the alts!
      (let [[msg chan] (alts! [[res-ch x] quit-ch])]
        (if (= chan quit-ch)
          (println "quit")
          (recur y (+ x y)))))))
 
 (let [res-ch (chan)
-      quit-ch (chan)
-      t! #(<!! (go (<! res-ch)))]
+      quit-ch (chan)]
   (go
    (doseq [_ (range 10)]
-     (println (t!)))
+     (println (<! res-ch)))
    (>! quit-ch 0))
 
-  (fib-q res-ch quit-ch))
+  ;; note that fib-q go 'process' are created after the consumer above
+
+  (fib-q res-ch quit-ch)
+  )

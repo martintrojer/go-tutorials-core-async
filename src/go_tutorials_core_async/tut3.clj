@@ -12,11 +12,9 @@
          (recur y (+ x y) (inc ctr)))
        (close! ch)))))
 
-(let [ch (chan 10)
-      t! #(<!! (go (<! ch)))]
-
+(let [ch (chan 10)]
   (fib-n 20 ch)
-  (loop [v (t!)]
+  (loop [v (<!! ch)]
     (when v
       (println v)
-      (recur (t!)))))
+      (recur (<!! ch)))))
