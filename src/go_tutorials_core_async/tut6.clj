@@ -11,8 +11,8 @@
         crawler (fn crawler [url depth]
                   (go
                    (when (and (pos? depth) (not (@seen url)))
-                     (let [res (fetch fetcher url)]
-                       (swap! seen conj url)
+                     (swap! seen conj url)
+                     (when-let [res (fetch fetcher url)]
                        (>! ch (assoc res :url url))
                        (doseq [u (:urls res)]
                          (crawler u (dec depth)))))))]
