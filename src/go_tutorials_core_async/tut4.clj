@@ -7,7 +7,7 @@
   (go
    (loop [x 0 y 1]
      ;; note we're putting onto res-ch inside the alts!
-     (let [[msg chan] (alts! [[res-ch x] quit-ch])]
+     (let [[_ chan] (alts! [[res-ch x] quit-ch])]
        (if (= chan quit-ch)
          (println "quit")
          (recur y (+ x y)))))))
