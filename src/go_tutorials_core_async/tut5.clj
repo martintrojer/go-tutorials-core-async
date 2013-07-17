@@ -5,12 +5,14 @@
 
 (defn walk [tree ch]
   (letfn [(walker [t]
-            (when t
-              (walker (:left t))
-              (>!! ch (:value t))
-              (walker (:right t))))]
-    (walker tree)
-    (close! ch)))
+            (go
+             (when t
+               (<! (walker (:left t)))
+               (>! ch (:value t))
+               (<! (walker (:right t))))))]
+    (go
+     (<! (walker tree))
+     (close! ch))))
 
 (defn same [t1 t2]
   (let [ch1 (chan)
@@ -18,9 +20,8 @@
         drain #(loop [v (<!! %) res []]
                  (if v (recur (<!! %) (conj res v)) res))]
 
-    ;; how to do this with go blocks?
-    (thread (walk t1 ch1))
-    (thread (walk t2 ch2))
+    (walk t1 ch1)
+    (walk t2 ch2)
 
     (= (drain ch1) (drain ch2))))
 
