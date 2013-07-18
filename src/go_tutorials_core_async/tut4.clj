@@ -15,7 +15,7 @@
 (let [res-ch (chan)
       quit-ch (chan)]
   (go
-   (doseq [_ (range 10)]
+   (dotimes [_ 10]
      (println (<! res-ch)))
    (>! quit-ch 0))
 

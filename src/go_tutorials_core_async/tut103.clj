@@ -16,7 +16,7 @@
     ch))
 
 (let [ch (tut102/fan-in (boring "Joe") (boring "Ann"))]
-  (doseq [_ (range 5)]
+  (dotimes [_ 5]
     (let [msg1 (<!! ch)
           msg2 (<!! ch)]
       (println (:str msg1))

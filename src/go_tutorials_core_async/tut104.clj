@@ -15,6 +15,6 @@
     ch))
 
 (let [ch (fan-in (tut101/boring "Joe") (tut101/boring "Ann"))]
-  (doseq [_ (range 10)]
+  (dotimes [_ 10]
     (println (<!! ch)))
   (println "You're both boring, I'm leaving"))

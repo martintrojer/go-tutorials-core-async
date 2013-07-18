@@ -17,7 +17,7 @@
 
 (let [quit (chan)
       joe (boring "Joe" quit)]
-  (doseq [_ (range 5)]
+  (dotimes [_ 5]
     (println (<!! joe)))
   (println "You talk to much.")
   (>!! quit :stop)

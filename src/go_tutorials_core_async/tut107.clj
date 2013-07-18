@@ -34,5 +34,5 @@
                              (alt!! [ch (timeout 80)]
                                     ([v] v))))))))
 
-(doseq [_ (range 10)]
+(dotimes [_ 10]
   (println (google "clojure")))

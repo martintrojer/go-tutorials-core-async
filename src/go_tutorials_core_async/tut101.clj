@@ -14,7 +14,7 @@
 
 (let [joe-ch (boring "Joe")
       ann-ch (boring "Ann")]
-  (doseq [_ (range 5)]
+  (dotimes [_ 5]
     (println (<!! joe-ch))
     (println (<!! ann-ch)))
   (println "You're both boring, I'm leaving"))
