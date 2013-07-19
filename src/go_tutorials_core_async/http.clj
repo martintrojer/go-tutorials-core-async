@@ -1,8 +1,10 @@
 (ns go-tutorials-core-async.http
-  (:require [clj-http.client :as client]))
-
-;; use (non-blocking) http-get -- is there a callback option?
+  (:use [clojure.core.async])
+  (:require [clj-http.client]
+            [org.httpkit.client]))
 
 (defn blocking-get [url]
-  (clj-http.client/get url
-                       ))
+  (clj-http.client/get url))
+
+(defn async-get [url result]
+  (org.httpkit.client/get url #(go (>! result %))))

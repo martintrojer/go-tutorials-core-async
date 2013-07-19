@@ -25,19 +25,19 @@
     updates))
 
 (defn poller [in out status]
-  ;; uses 'thread' instead of 'go' since we are using blocking IO here
-  (thread
-   (loop []
-     (when-let [resource (<!! in)]
-       (println "polling" resource)
-       (let [res (try
-                   (blocking-get (:url resource))
-                   (catch Exception e
-                     (swap! (:error-count resource) inc)
-                     {:status 500}))]
-         (>!! status (assoc res :url (:url resource))))
-       (>!! out resource)
-       (recur)))
+   (go
+    (loop []
+      (let [resource (<!! in)
+            res-ch (chan)]
+        (when resource
+          (println "polling" resource)
+          (async-get (:url resource) res-ch)
+          (let [res (<! res-ch)]
+            (when (:error res)
+              (swap! (:error-count resource) inc))
+            (>! status (assoc res :url (:url resource))))
+          (>! out resource)
+          (recur))))
    (println "poller thread shutting down")))
 
 (defn wait-and-schedule [resource out]
