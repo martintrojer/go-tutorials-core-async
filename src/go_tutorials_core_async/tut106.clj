@@ -23,4 +23,9 @@
 ;; $ go run tut106.go
 ;; 67.87ms
 
-;; that makes core.async an order of magnitude slower
+;; ---
+
+;; The Clojure timings can be greatly improved by various JVM settings
+;; since this benchmark is GC dominated.
+
+;; I've gotten this snippet down to < 200ms.
