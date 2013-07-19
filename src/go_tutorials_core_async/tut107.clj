@@ -1,4 +1,5 @@
 ;; http://talks.golang.org/2012/concurrency.slide#50
+;; http://swannodette.github.io/2013/07/12/communicating-sequential-processes/
 
 (ns go-tutorials-core-async.tut107
   (:use [clojure.core.async]))
