@@ -2,7 +2,8 @@
 
 (ns go-tutorials-core-async.tut300
   (:use [clojure.core.async]
-        [go-tutorials-core-async.http]))
+        [go-tutorials-core-async.http]
+        [go-tutorials-core-async.logger]))
 
 (defn state-monitor [interval]
   (let [updates (chan)]
@@ -19,9 +20,9 @@
 
           :else
           (do
-            (doseq [s statuses] (println s))
+            (doseq [s statuses] (log s))
             (recur statuses)))))
-     (println "state-monitor stopping"))
+     (log "state-monitor stopping"))
     updates))
 
 (defn poller [in out status]
@@ -30,21 +31,21 @@
       (let [resource (<!! in)
             res-ch (chan)]
         (when resource
-          (println "polling" resource)
-          (async-get (:url resource) res-ch)
+          (log "polling" resource)
+          (async-get res-ch (:url resource))
           (let [res (<! res-ch)]
             (when (:error res)
               (swap! (:error-count resource) inc))
             (>! status (assoc res :url (:url resource))))
           (>! out resource)
           (recur))))
-   (println "poller thread shutting down")))
+   (log "poller thread shutting down")))
 
 (defn wait-and-schedule [resource out]
   (go
-   (println "waiting for" (:url resource))
+   (log "waiting for" (:url resource))
    (<! (timeout (+ 10000 (rand-int 100) (* 10000 @(:error-count resource)))))
-   (println "scheduling" (:url resource))
+   (log "scheduling" (:url resource))
    (>! out resource)))
 
 (def run (atom true))

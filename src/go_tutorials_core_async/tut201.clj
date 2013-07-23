@@ -3,30 +3,34 @@
 (ns go-tutorials-core-async.tut201
   (:use [clojure.core.async]
         [clojure.set]
-        [go-tutorials-core-async.http]))
-
-(def get-entries (partial get-blog-entries blocking-get))
+        [go-tutorials-core-async.http]
+        [go-tutorials-core-async.logger]))
 
 (defn subscription [url interval max-pending]
   (let [update-ch (chan)
-        quit-ch (chan)]
-    ;; thread because we using a blocking get call
-    (thread
-     (loop [[fst & rst :as updates] (get-entries url)
+        quit-ch (chan)
+        res-ch (chan)]
+    (go
+     (log url "started")
+     (async-get res-ch url)
+     (loop [[fst & rst :as updates] []
             seen-ids (->> updates (map :id) (into #{}))]
-       (let [query [quit-ch (timeout interval)]
+       (let [query [res-ch quit-ch (timeout interval)]
              query (if-not (nil? fst) (conj query [update-ch fst]) ;; potentially append the put query
                            query)
-             [_ ch] (alts!! query)]
+             [msg ch] (alts! query)]
          (cond
           (= ch quit-ch) (close! update-ch)
           (= ch update-ch) (recur rst seen-ids)
-          :else (let [entries (get-entries url)
-                      new-entries (remove #(seen-ids (:id %)) entries)]
-                  (println "got" (count entries) ": new" (count new-entries) ":" url)
-                  (recur (take max-pending (concat updates new-entries))
-                         (union seen-ids (->> new-entries (map :id) (into #{}))))))))
-     (println url "subscriber quitting"))
+          (= ch res-ch) (let [entries (get-blog-entries msg)
+                              new-entries (remove #(seen-ids (:id %)) entries)]
+                          (log "got" (count entries) ": new" (count new-entries) ":" url)
+                          (recur (take max-pending (concat updates new-entries))
+                                 (union seen-ids (->> new-entries (map :id) (into #{})))))
+          :else (do
+                  (async-get res-ch url)
+                  (recur updates seen-ids)))))
+     (log url "subscriber quitting"))
     [update-ch quit-ch]))
 
 (defn fan-in [& ins]
@@ -43,7 +47,7 @@
       chs (mapv #(subscription % 1000 500) feeds)
       all-ch (apply fan-in (map first chs))]
   (dotimes [_ 5]
-    (println (<!! all-ch))
+    (log (<!! all-ch))
     (Thread/sleep 1000))
   (close! all-ch)
   (doseq [qc (map second chs)]

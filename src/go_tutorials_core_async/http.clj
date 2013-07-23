@@ -8,10 +8,10 @@
 (defn blocking-get [url]
   (clj-http.client/get url))
 
-(defn async-get [url result]
+(defn async-get [result url]
   (org.httpkit.client/get url #(go (>! result %))))
 
-(defn get-blog-entries [f url]
+(defn get-blog-entries [data]
   (letfn [(zip-str [s]
             (zip/xml-zip (xml/parse (java.io.ByteArrayInputStream. (.getBytes s)))))
           (get-data [c]
@@ -19,8 +19,7 @@
               {:id (get-content :id)
                :title (get-content :title)
                :body (get-content :content)}))]
-    (->> url
-         f
+    (->> data
          :body
          zip-str
          zip/children
