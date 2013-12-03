@@ -1,7 +1,7 @@
 ;;http://tour.golang.org/#70
 
-(ns go-tutorials-core-async.tut6
-  (:use [clojure.core.async]))
+(ns tut6
+  (:require [clojure.core.async :refer [go chan timeout >! alts!!]]))
 
 (defprotocol Fetcher
     (fetch [this url]))

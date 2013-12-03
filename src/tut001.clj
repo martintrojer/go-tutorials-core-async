@@ -1,7 +1,7 @@
 ;; http://tour.golang.org/#62
 
-(ns go-tutorials-core-async.tut1
-  (:use [clojure.core.async]))
+(ns tut1
+  (:require [clojure.core.async :refer [go timeout <!]]))
 
 (go
  (dotimes [_ 5]

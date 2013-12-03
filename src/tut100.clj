@@ -1,7 +1,7 @@
 ;; http://talks.golang.org/2012/concurrency.slide#16
 
-(ns go-tutorials-core-async.tut100
-  (:use [clojure.core.async]))
+(ns tut100
+  (:require [clojure.core.async :refer [go timeout]]))
 
 (def run (atom true))
 

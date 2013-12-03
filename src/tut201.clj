@@ -1,10 +1,10 @@
 ;; http://talks.golang.org/2013/advconc.slide#14 (and later)
 
-(ns go-tutorials-core-async.tut201
-  (:use [clojure.core.async]
-        [clojure.set]
-        [go-tutorials-core-async.http]
-        [go-tutorials-core-async.logger]))
+(ns tut201
+  (:require [clojure.core.async :refer [go timeout >! >!! <! <!! chan close!]])
+  (:use [clojure.set]
+        [tuthttp]
+        [logger]))
 
 (defn subscription [url interval max-pending]
   (let [update-ch (chan)

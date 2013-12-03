@@ -1,15 +1,14 @@
 ;; http://talks.golang.org/2012/concurrency.slide#26
 
-(ns go-tutorials-core-async.tut101
-  (:use [clojure.core.async]))
+(ns tut101
+  (:require [clojure.core.async :refer [go-loop timeout >! <! <!! chan]]))
 
 (defn boring [msg]
   (let [ch (chan)]
-    (go
-     (loop [i 0]
-       (>! ch (str msg i))
-       (<! (timeout (rand-int 1000)))
-       (recur (inc i))))
+    (go-loop [i 0]
+      (>! ch (str msg i))
+      (<! (timeout (rand-int 1000)))
+      (recur (inc i)))
     ch))
 
 (let [joe-ch (boring "Joe")

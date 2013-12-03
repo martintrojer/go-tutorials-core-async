@@ -1,4 +1,4 @@
-(ns go-tutorials-core-async.logger)
+(ns logger)
 
 (def ^:private log-agent (agent 0))
 

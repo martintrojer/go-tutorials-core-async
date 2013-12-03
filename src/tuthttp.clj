@@ -1,6 +1,6 @@
-(ns go-tutorials-core-async.http
-  (:use [clojure.core.async])
-  (:require [clj-http.client]
+(ns tuthttp
+  (:require [clojure.core.async :refer [go >!]]
+            [clj-http.client]
             [org.httpkit.client]
             [clojure.xml :as xml]
             [clojure.zip :as zip]))

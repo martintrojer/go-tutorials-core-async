@@ -1,10 +1,10 @@
 ;; http://tour.golang.org/#63
 
-(ns go-tutorials-core-async.tut2
-  (:use [clojure.core.async]))
+(ns tut2
+  (:require [clojure.core.async :refer [go chan <! <!!]]))
 
 (defn sum [vals ch]
-  (go (>! ch (reduce + vals))))
+  (go (>! ch (clojure.core/reduce + vals))))
 
 (let [vals [7 2 8 -9 4 0]
       ch (chan)]

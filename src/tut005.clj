@@ -1,7 +1,7 @@
 ;;http://tour.golang.org/#68
 
-(ns go-tutorials-core-async.tut5
-  (:use [clojure.core.async]))
+(ns tut5
+  (:require [clojure.core.async :refer [go <! chan <!! close!]]))
 
 (defn walk [tree ch]
   (letfn [(walker [t]

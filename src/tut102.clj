@@ -1,13 +1,13 @@
 ;; http://talks.golang.org/2012/concurrency.slide#27
 
-(ns go-tutorials-core-async.tut102
-  (:use [clojure.core.async])
-  (:require [go-tutorials-core-async.tut101 :as tut101]))
+(ns tut102
+  (:require [clojure.core.async :refer [go-loop >! <! <!! chan]]
+            [tut101]))
 
 (defn fan-in [in1 in2]
   (let [ch (chan)]
-    (go (loop [] (>! ch (<! in1)) (recur)))
-    (go (loop [] (>! ch (<! in2)) (recur)))
+    (go-loop [] (>! ch (<! in1)) (recur))
+    (go-loop [] (>! ch (<! in2)) (recur))
     ch))
 
 (let [ch (fan-in (tut101/boring "Joe") (tut101/boring "Ann"))]

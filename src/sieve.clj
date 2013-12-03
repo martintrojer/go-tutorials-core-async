@@ -1,17 +1,16 @@
 ;; sieve of eratosthenes
 
-(ns go-tutorials-core-async.sieve
-  (:use [clojure.core.async]))
+(ns sieve
+  (:require [clojure.core.async :refer [go-loop >! <! <!! chan]]))
 
 (defn prime-filter [in out prime]
-  (go
-   (loop [i (<! in)]
-     (when-not (zero? (mod i prime))
-       (>! out i))
-     (recur (<! in)))))
+  (go-loop [i (<! in)]
+           (when-not (zero? (mod i prime))
+             (>! out i))
+           (recur (<! in))))
 
 (let [ch (chan)]
-  (go (loop [i 2] (>! ch i) (recur (inc i))))
+  (go-loop [i 2] (>! ch i) (recur (inc i)))
 
   (loop [ch ch, i 100]
     (when (pos? i)

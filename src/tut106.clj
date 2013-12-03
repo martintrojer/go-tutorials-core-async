@@ -1,7 +1,7 @@
 ;; http://talks.golang.org/2012/concurrency.slide#39
 
-(ns go-tutorials-core-async.tut106
-  (:use [clojure.core.async]))
+(ns tut106
+  (:require [clojure.core.async :refer [go >! >!! <! <!! chan]]))
 
 (defn f [left right]
   (go (>! left (inc (<! right)))))
